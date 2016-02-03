@@ -41,8 +41,13 @@ public class InfoBox extends JPanel {
 
 			public void actionPerformed(ActionEvent e) 
 			{
-				printWriter.println(e.getActionCommand());
-				printWriter.flush();
+				try {
+					file.addInfo(e.getActionCommand());
+				} catch (IOException e1) {
+					System.out.println("Info was not successfully added to file.");
+				}
+//				printWriter.print(e.getActionCommand());
+//				printWriter.flush();
 				textField.setText("");
 			}
 
@@ -64,15 +69,17 @@ public class InfoBox extends JPanel {
 			}
 		});
 
-		JButton openFile = new JButton("Open File");
+		JButton openFile = new JButton("Open Raw File");
 		openFile.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				try {
 					Desktop.getDesktop().open(file);
+					System.out.println(file.getTitle());
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
+				
 			}
 		});
 

@@ -45,9 +45,6 @@ public class MainDriver {
 
 			window.setVisible(true);
 
-			while((line = bufferedReader.readLine()) != null)
-				System.out.println(line);
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
