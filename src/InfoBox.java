@@ -1,56 +1,86 @@
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 
 import javax.swing.*;
 
-
+/**
+ * 
+ * @author Jimmy
+ *
+ */
 @SuppressWarnings("serial")
 public class InfoBox extends JPanel {
 
-	OutputStream out;
+	SmartFile file;
+	FileWriter fileWriter;
+	PrintWriter printWriter;
 
-  public InfoBox(JFrame window, OutputStream os) {
-	  setBounds(0, 0, window.getWidth(), window.getHeight());
-	  createInterface();
-	  out = os;
-	  
-/*	  
-	  try {
-		out.write("hey".getBytes());
-		out.flush();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	public InfoBox(JFrame window, SmartFile f) throws IOException 
+	{
+		if(f.createNewFile())
+			System.out.println("created new file");
+		setBounds(0, 0, window.getWidth(), window.getHeight());
+		createInterface();
+		file = f;
+		fileWriter = new FileWriter(file, true);
+		printWriter = new PrintWriter(fileWriter);
+
 	}
-*/		
-		
-  }
 
-  public void createInterface()
-  {
-	  JTextField textField = new JTextField(20);
-	  textField.addActionListener(new ActionListener(){
-		  
-		  public void actionPerformed(ActionEvent e) 
+	public void createInterface()
+	{
+		JLabel label = new JLabel();
+		label.setText("Info:");
+
+		final JTextField textField = new JTextField(20);
+		textField.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) 
 			{
-			  try {
-				out.write(e.getActionCommand().getBytes());
-				out.flush();
-			} catch (IOException e1) {
-				e1.printStackTrace();
+				printWriter.println(e.getActionCommand());
+				printWriter.flush();
+				textField.setText("");
 			}
+
+		});
+
+		final JButton deleteButton = new JButton("Delete Saved File");
+		deleteButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				String message = "Would you like to delete your saved file? You will lose all data!";
+				if(JOptionPane.showConfirmDialog(deleteButton, message) == 0)
+				{
+					try {
+						fileWriter = new FileWriter(file);
+					} catch (IOException e1) {
+						System.err.println("Couln't create file");
+					}
+				}	
 			}
-		  
-	  }
-			  );
-	  this.add(textField);
-  }
-  public void actionPerformed(ActionEvent event)
-  {
-	  System.out.println(event.getActionCommand());
-  }
- 
+		});
+
+		JButton openFile = new JButton("Open File");
+		openFile.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Desktop.getDesktop().open(file);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+
+		add(label);
+		add(textField);
+		add(deleteButton);
+		add(openFile);
+	}
+
+
 }
