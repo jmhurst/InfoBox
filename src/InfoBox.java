@@ -37,6 +37,7 @@ public class InfoBox extends JPanel {
 
 	public void createInterface() throws IOException
 	{
+		final JList<String> infoList = new JList<>();
 		JLabel titleLabel = new JLabel();
 		titleLabel.setText("Title:");
 		
@@ -59,19 +60,7 @@ public class InfoBox extends JPanel {
 		infoLabel.setText("Info:");
 
 		final JTextField infoTextField = new JTextField(20);
-		infoTextField.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent e) 
-			{
-				try {
-					file.addInfo(e.getActionCommand());
-				} catch (IOException e1) {
-					System.out.println("Info was not successfully added to file.");
-				}
-				infoTextField.setText("");
-			}
-
-		});
+	
 		final JList<String> topicList = new JList<>();
 		
 		
@@ -82,12 +71,23 @@ public class InfoBox extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					file.addTopic(e.getActionCommand());
-					upDateList(topicList);
+					upDateTopicList(topicList);
 					
 				} catch (IOException e1) {
 					System.out.println("Info was not successfully added to file.");
 				}
 				topicTextField.setText("");
+				if(file!=null)
+				{
+					DefaultListModel<String> list = new DefaultListModel<String>();
+					try {
+						for(String a : file.getInfoList(topicList.getSelectedValue()))
+							list.addElement(a);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					infoList.setModel(list);
+				}
 			}
 		});
 		
@@ -97,10 +97,51 @@ public class InfoBox extends JPanel {
 				if(topicList.getSelectedValue() != null)
 				{
 					topicTextField.setText(topicList.getSelectedValue());
+					if(file!=null)
+					{
+						DefaultListModel<String> list = new DefaultListModel<String>();
+						try {
+							for(String a : file.getInfoList(topicList.getSelectedValue()))
+								list.addElement(a);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+						infoList.setModel(list);
+					}
 				}
 			}
 		});
-		
+		infoTextField.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) 
+			{
+				try {
+					String topicString = topicTextField.getText();
+					
+					if(topicString.equals(""))
+						file.addInfo(e.getActionCommand());
+					else
+						file.addInfo(e.getActionCommand(), topicString);
+				} catch (IOException e1) {
+					System.out.println("Info was not successfully added to file.");
+				}
+				infoTextField.setText("");
+				
+				if(file!=null)
+				{
+					DefaultListModel<String> list = new DefaultListModel<String>();
+					try {
+						upDateTopicList(topicList);
+						for(String a : file.getInfoList(topicList.getSelectedValue()))
+							list.addElement(a);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					infoList.setModel(list);
+				}
+			}
+
+		});
 		JLabel topicLabel = new JLabel("Topics:");
 		JScrollPane topicPane;
 		if(file!=null)
@@ -123,7 +164,12 @@ public class InfoBox extends JPanel {
 				{
 					try {
 						fileWriter = new FileWriter(file);
-						upDateList(topicList);
+						upDateTopicList(topicList);
+						DefaultListModel<String> list = new DefaultListModel<String>();
+						infoList.setModel(list);
+						topicTextField.setText("");
+						infoTextField.setText("");
+						titleTextField.setText("");
 					} catch (IOException e1) {
 						System.err.println("Couln't create file");
 					}
@@ -137,14 +183,45 @@ public class InfoBox extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					Desktop.getDesktop().open(file);
-					System.out.println(file.getTitle());
+					file.getTitle();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
 				
 			}
 		});
+		
+		JButton deleteSelected = new JButton("Delete Selected Item");
+		deleteSelected.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				if(infoList.getSelectedValue() != null && !infoList.isSelectionEmpty()){
+					try {
+						file.deleteInfo(infoList.getSelectedValue());
+						upDateInfoList(infoList, topicList.getSelectedValue());
+					} catch (IOException e1) {
+						System.err.println("Could not delete topic.");
+					}
+					
+				}else if(topicList.getSelectedValue() != null && !topicList.isSelectionEmpty())
+				{
+					try {
+						file.deleteTopic(topicList.getSelectedValue());
+						upDateTopicList(topicList);
+						upDateInfoList(infoList, topicList.getSelectedValue());
+					} catch (IOException e1) {
+						System.err.println("Could not delete topic.");
+					}
+					topicTextField.setText("");
+				}
+			}
+		});
 
+		
+		JScrollPane infoPane;
+
+		infoPane = new JScrollPane(infoList);
+		
 		add(titleLabel);
 		add(titleTextField);
 		add(infoLabel);
@@ -154,9 +231,11 @@ public class InfoBox extends JPanel {
 		add(topicLabel);
 		add(topicTextField);
 		add(topicPane);
+		add(infoPane);
+		add(deleteSelected);
 	}
 	
-	public void upDateList(JList<String> topicList) throws IOException
+	public void upDateTopicList(JList<String> topicList) throws IOException
 	{
 		if(file != null)
 		{
@@ -164,8 +243,19 @@ public class InfoBox extends JPanel {
 			if(file.getTopicList() != null)
 				for(String a : file.getTopicList())
 					list.addElement(a);
-			System.out.println("this far");
-				topicList.setModel(list);
+			topicList.setModel(list);
+		}
+	}
+	
+	public void upDateInfoList(JList<String> infoList, String topic) throws IOException
+	{
+		if(file != null)
+		{
+			DefaultListModel<String> list = new DefaultListModel<String>();
+			if(file.getInfoList(topic) != null)
+				for(String a : file.getInfoList(topic))
+					list.addElement(a);
+			infoList.setModel(list);
 		}
 	}
 
