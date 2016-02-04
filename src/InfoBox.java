@@ -3,6 +3,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -217,6 +218,20 @@ public class InfoBox extends JPanel {
 			}
 		});
 
+		JButton printFile = new JButton("Print Whole File");
+		printFile.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				File f = null;
+				try {
+					f = file.copyFile(f);
+					Desktop.getDesktop().open(f);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
+			}
+		});
 		
 		JScrollPane infoPane;
 
@@ -233,6 +248,7 @@ public class InfoBox extends JPanel {
 		add(topicPane);
 		add(infoPane);
 		add(deleteSelected);
+		add(printFile);
 	}
 	
 	public void upDateTopicList(JList<String> topicList) throws IOException

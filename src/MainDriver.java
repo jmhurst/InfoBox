@@ -1,3 +1,4 @@
+import java.awt.Rectangle;
 import java.io.*;
 
 import javax.swing.JFrame;
@@ -16,6 +17,7 @@ public class MainDriver {
 		
 		window.setTitle("InfoBox");
 		window.setSize(600, 400);
+		window.setMaximizedBounds(new Rectangle(600, 340, 600, 400));
 		window.setLocation(660, 340);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

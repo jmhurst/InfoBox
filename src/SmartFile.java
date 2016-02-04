@@ -194,7 +194,6 @@ public class SmartFile extends File {
 				info = line.substring(line.indexOf(infoStart) + infoStart.length(), line.indexOf(infoEnd));
 				line = line.substring(line.indexOf(infoEnd) + infoEnd.length());
 				
-				System.out.println("Added: " + info);
 				list[count] = info;
 				count++;
 			}
@@ -215,8 +214,10 @@ public class SmartFile extends File {
 		String holdEnd;
 		
 		holdEnd = line.substring(line.indexOf(topicStart) + topicStart.length());
-		holdEnd = line.substring(line.indexOf(topicEnd) + topicEnd.length());
+		holdEnd = holdEnd.substring(holdEnd.indexOf(topicEnd) + topicEnd.length());
+		
 		line = line.substring(0, line.indexOf(topicStart)) + holdEnd; 
+		System.out.println(holdEnd);
 		
 		printToFile();
 		
@@ -233,6 +234,22 @@ public class SmartFile extends File {
 		line = line.substring(0, line.indexOf(info)) + holdEnd; 
 		
 		printToFile();
+	}
+	
+	public File copyFile(File f) throws IOException
+	{
+		f = new File("info.rtf");
+		line = reader.readLine();
+		reader = new BufferedReader(new FileReader(this));
+		FileWriter writer = new FileWriter(f, true);
+		@SuppressWarnings("resource")
+		PrintWriter printer = new PrintWriter(writer);
+		
+		printer.print(line);
+		printer.flush();
+		
+		return f;
+		
 	}
 	
 	public void printToFile() throws IOException
