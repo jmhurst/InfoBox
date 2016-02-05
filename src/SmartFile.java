@@ -58,7 +58,6 @@ public class SmartFile extends File {
 			}
 		}
 		return resultStr;
-		
 	}
 	/**
 	 * Sets the title value in the text document to given string
@@ -166,7 +165,6 @@ public class SmartFile extends File {
 				line = line + start + topic + end;
 			else
 				line = start + topic + end;
-			
 			printToFile();
 		}
 	}
@@ -285,17 +283,11 @@ public class SmartFile extends File {
 						
 					}
 					line = line.substring(line.indexOf(end) + end.length());
-					
-					
 				}
-				
 			}
 		}
-		
 		printer.flush();
-		
 		return f;
-		
 	}
 	
 	public void printToFile() throws IOException

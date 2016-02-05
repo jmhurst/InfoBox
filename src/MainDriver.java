@@ -26,18 +26,14 @@ public class MainDriver {
 			f.createNewFile();
 			file = new SmartFile(fileName);
 			file.createNewFile();
-
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-
+		
 		try {
-
 			InfoBox ib = new InfoBox(window, file);
 			window.add(ib);
-
 			window.setVisible(true);
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
