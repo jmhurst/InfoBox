@@ -4,6 +4,7 @@
 .settings
 info.txt
 info.rtf
+readableInfo.txt
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

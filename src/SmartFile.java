@@ -238,14 +238,60 @@ public class SmartFile extends File {
 	
 	public File copyFile(File f) throws IOException
 	{
-		f = new File("info.rtf");
+		f = new File("readableInfo.txt");
 		line = reader.readLine();
 		reader = new BufferedReader(new FileReader(this));
-		FileWriter writer = new FileWriter(f, true);
+		FileWriter writer = new FileWriter(f);
 		@SuppressWarnings("resource")
 		PrintWriter printer = new PrintWriter(writer);
+		String title = "", start, end;
+		String topic = "";
+		String info = "", infoStart, infoEnd;
+		start = "<title>";
+		end = "</title>";
+		if(line!=null)
+		{
+			if(line.contains(start))
+			{
+				System.out.println("got title");
+				title = line.substring(line.indexOf(start) + start.length(), line.indexOf(end));
+				line = line.substring(line.indexOf(end) + end.length());
+				printer.println(title);
+				for(int i = 0; i < title.length(); i++)
+					printer.print("-");
+				printer.println();
+			}
+			start = "<topic>";
+			end = "</topic>";
+			infoStart = "<info>";
+			infoEnd = "</info>";
+			while(line.contains(start))
+			{
+				if(line.indexOf(end) <  line.indexOf(infoStart))
+				{
+					topic = line.substring(line.indexOf(start)+start.length(), line.indexOf(end));
+					line = line.substring(line.indexOf(end) + end.length());
+					printer.println("-" + topic + "-");
+					
+				}else{
+					topic = line.substring(line.indexOf(start)+start.length(), line.indexOf(infoStart));
+					printer.println("-" + topic + "-");
+					info = line.substring(line.indexOf(infoStart), line.indexOf(end));
+					
+					while(info.contains(infoStart))
+					{
+						printer.println("  >" + info.substring(info.indexOf(infoStart) + infoStart.length(), info.indexOf(infoEnd)));
+						info = info.substring(info.indexOf(infoEnd) + infoEnd.length());
+						
+					}
+					line = line.substring(line.indexOf(end) + end.length());
+					
+					
+				}
+				
+			}
+		}
 		
-		printer.print(line);
 		printer.flush();
 		
 		return f;
@@ -255,10 +301,7 @@ public class SmartFile extends File {
 	public void printToFile() throws IOException
 	{
 		//clears current file and writes updated line
-		printWriter = new PrintWriter(this);
-		printWriter.print("");
-		printWriter.close();
-		fileWriter = new FileWriter(this, true);
+		fileWriter = new FileWriter(this);
 		printWriter = new PrintWriter(fileWriter);
 		printWriter.print(line);
 		printWriter.flush();
