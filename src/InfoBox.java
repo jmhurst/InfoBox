@@ -8,10 +8,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Properties;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 /**
  * 
@@ -40,6 +45,7 @@ public class InfoBox extends JPanel {
 	{
 		//title, topic, and info lists
 		final JTextField titleTextField = new JTextField(20);
+		titleTextField.setText(file.getTitle());
 		final JTextField topicTextField = new JTextField(20);
 		final JTextField infoTextField = new JTextField(20);
 		//lists to be used in panes later
@@ -54,6 +60,8 @@ public class InfoBox extends JPanel {
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel topicLabel = new JLabel("Topics:");
 		JLabel infoLabel = new JLabel("Info:");
+		JLabel topicListLabel = new JLabel("TOPICS");
+		JLabel infoListLabel = new JLabel("INFO");
 		//various buttons
 		final JButton deleteButton = new JButton("Delete Saved File");
 		JButton openFile = new JButton("Open Raw File");
@@ -64,6 +72,16 @@ public class InfoBox extends JPanel {
 		upDateTopicList(topicList);
 		topicPane = new JScrollPane(topicList);
 		topicPane.setPreferredSize(new Dimension(300,200));
+		
+		// Calendar 
+		UtilDateModel model = new UtilDateModel();
+		model.setSelected(true);
+		Properties p = new Properties();
+		p.put("text.today", "Today");
+		p.put("text.month", "Month");
+		p.put("text.year", "Year");
+		JDatePanelImpl datePanel = new JDatePanelImpl(model,p);
+		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
 		
 		/*
 		 * Action listeners for all the buttons and scroll panes used in the UI
@@ -232,10 +250,13 @@ public class InfoBox extends JPanel {
 		add(openFile);
 		add(topicLabel);
 		add(topicTextField);
+		//add(topicListLabel);
+		//add(infoListLabel);
 		add(topicPane);
 		add(infoPane);
 		add(deleteSelected);
 		add(printFile);
+		add(datePicker);
 	}
 	
 	/**
