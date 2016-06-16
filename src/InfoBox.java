@@ -1,5 +1,8 @@
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -25,6 +28,8 @@ public class InfoBox extends JPanel {
 	FileWriter fileWriter;
 	PrintWriter printWriter;
 	BufferedReader reader;
+	GridBagConstraints c;
+	GridBagLayout layout;
 
 	public InfoBox(JFrame window, SmartFile f) throws IOException 
 	{
@@ -33,6 +38,9 @@ public class InfoBox extends JPanel {
 		fileWriter = new FileWriter(file, true);
 		printWriter = new PrintWriter(fileWriter);
 		reader = new BufferedReader(new FileReader(file));
+		layout = new GridBagLayout();
+		this.setLayout(layout);
+		c = new GridBagConstraints();
 		createInterface();
 	}
 
@@ -45,12 +53,12 @@ public class InfoBox extends JPanel {
 		//lists to be used in panes later
 		final JList<String> infoList = new JList<>();
 		final JList<String> topicList = new JList<>();
-		
-		
+			
 		//panes for info and topic lists
 		JScrollPane infoPane = new JScrollPane(infoList);
+		infoPane.setPreferredSize(new Dimension(300,200));
 		JScrollPane topicPane;
-		//lables for title, topic, and info text fields
+		//labels for title, topic, and info text fields
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel topicLabel = new JLabel("Topics:");
 		JLabel infoLabel = new JLabel("Info:");
@@ -64,6 +72,34 @@ public class InfoBox extends JPanel {
 		upDateTopicList(topicList);
 		topicPane = new JScrollPane(topicList);
 		topicPane.setPreferredSize(new Dimension(300,200));
+		
+		
+		JPanel headingPane = new JPanel();
+		headingPane.setBackground(Color.BLUE);
+		//headingPane.setSize(new Dimension(600, 100));
+		JPanel leftPane = new JPanel();
+		leftPane.setBackground(Color.YELLOW);
+		JPanel rightPane = new JPanel();
+		rightPane.setBackground(Color.RED);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridheight =1;
+		c.gridwidth = 2;
+		c.fill = GridBagConstraints.BOTH;
+		this.add(headingPane, c);
+		
+		
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridheight =1;
+		c.gridwidth = 1;
+		this.add(leftPane, c);
+		
+		c.gridx = 1;
+		c.gridy = 1;
+		c.gridheight =1;
+		c.gridwidth = 1;
+		this.add(rightPane, c);
 		
 		/*
 		 * Action listeners for all the buttons and scroll panes used in the UI
@@ -223,19 +259,19 @@ public class InfoBox extends JPanel {
 			}
 		});
 		
-		//adding all the given elements to the jPanel
-		add(titleLabel);
-		add(titleTextField);
-		add(infoLabel);
-		add(infoTextField);
-		add(deleteButton);
-		add(openFile);
-		add(topicLabel);
-		add(topicTextField);
-		add(topicPane);
-		add(infoPane);
-		add(deleteSelected);
-		add(printFile);
+//		//adding all the given elements to the jPanel
+//		add(titleLabel);
+//		add(titleTextField);
+//		add(infoLabel);
+//		add(infoTextField);
+//		add(deleteButton);
+//		add(openFile);
+//		add(topicLabel);
+//		add(topicTextField);
+//		add(topicPane);
+//		add(infoPane);
+//		add(deleteSelected);
+//		add(printFile);
 	}
 	
 	/**
